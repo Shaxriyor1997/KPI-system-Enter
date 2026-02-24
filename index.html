@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPI - Операторов </title>
+    <title>KPI - Система учёта СИЗ</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -119,16 +119,8 @@
             background: #48bb78;
         }
 
-        .btn-success:hover {
-            background: #38a169;
-        }
-
         .btn-danger {
             background: #e53e3e;
-        }
-
-        .btn-danger:hover {
-            background: #c53030;
         }
 
         .btn-excel {
@@ -254,17 +246,9 @@
             color: white;
         }
 
-        .edit-btn:hover {
-            background: #38a169;
-        }
-
         .delete-btn {
             background: #f56565;
             color: white;
-        }
-
-        .delete-btn:hover {
-            background: #e53e3e;
         }
 
         .statistics {
@@ -280,20 +264,14 @@
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
         }
 
         .stat-card h3 {
             color: #667eea;
             margin-bottom: 10px;
-            font-size: 1.1em;
         }
 
-        .stat-card .stat-value {
+        .stat-value {
             font-size: 2em;
             font-weight: bold;
             color: #333;
@@ -335,12 +313,6 @@
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             min-width: 300px;
-            font-size: 14px;
-        }
-
-        .user-filter label {
-            font-weight: bold;
-            color: #667eea;
         }
 
         .loading {
@@ -364,20 +336,12 @@
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
             .form-row {
                 grid-template-columns: 1fr;
             }
             
             .export-buttons {
                 flex-direction: column;
-            }
-            
-            .user-filter select {
-                min-width: 100%;
             }
         }
     </style>
@@ -396,7 +360,7 @@
                 <h2>Вход в систему</h2>
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="Введите email">
+                    <input type="email" id="loginEmail" placeholder="Введите email" value="shaxriyor1997.ss@gmail.com">
                 </div>
                 <div class="form-group">
                     <label>Пароль</label>
@@ -424,8 +388,9 @@
                     <label>Должность</label>
                     <select id="regPosition">
                         <option value="Заведующий складом">Заведующий складом</option>
-                        <option value="Продавец">Специалист по вводу данных в 1С</option>
-                        <option value="Приёмщик">Ведущий специалист</option>
+                        <option value="Ведущий специалист">Ведущий специалист</option>
+                        <option value="Продавец">Продавец</option>
+                        <option value="Приёмщик">Приёмщик</option>
                         <option value="Кладовщик">Кладовщик</option>
                         <option value="Бухгалтер">Бухгалтер</option>
                     </select>
@@ -433,18 +398,15 @@
                 <div class="form-group">
                     <label>Склад</label>
                     <select id="regWarehouse">
-                       <option value="ПС Алмалык (Металлопрокат)">ПС Алмалык (Металлопрокат)</option>
+                        <option value="Основной склад">Основной склад</option>
                         <option value="ТС Алмалык">ТС Алмалык</option>
-                        <option value="Склад материалов">ПС Алмалык (Основной)</option>
-                        <option value="ПС Алмалык (Инерт)">ПС Алмалык (Инерт)</option>
-                        <option value="ПС Алмалык (СИЗ)">ПС Алмалык (СИЗ)</option>
-                        <option value="ГПС Алмалык (Кабель)">ПС Алмалык (Кабель)</option>
-                        <option value="ПС НСГД Алмалык (основной)">ПС НСГД Алмалык (основной)</option>
+                        <option value="Дополнительный склад">Дополнительный склад</option>
+                        <option value="Склад материалов">Склад материалов</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Секретный код (для администратора)</label>
-                    <input type="text" id="regAdminCode" placeholder="Введите код для админа">
+                    <input type="text" id="regAdminCode" placeholder="Введите admin123 для админа">
                 </div>
                 <button class="btn" onclick="register()">Зарегистрироваться</button>
             </div>
@@ -454,7 +416,7 @@
         <div id="appContainer" class="app-container">
             <div class="header">
                 <div>
-                    <h1>📊 KPI - Операторов</h1>
+                    <h1>📊 KPI - Склад и СИЗ учёт</h1>
                     <div id="currentDateTime"></div>
                 </div>
                 <div class="user-info">
@@ -470,10 +432,9 @@
                 <select id="userSelect" onchange="filterByUser()">
                     <option value="all">Все пользователи</option>
                 </select>
-                <button class="btn btn-success" onclick="loadAllUsersData()" style="width: auto;">Обновить список</button>
             </div>
 
-            <!-- Edit Form (hidden by default) -->
+            <!-- Edit Form -->
             <div id="editForm" class="edit-form" style="display: none;">
                 <h3>✏️ Редактирование записи</h3>
                 <div class="form-row">
@@ -510,7 +471,7 @@
 
             <!-- Data Entry Form -->
             <div class="form-section">
-                <h2>➕ Добавить новые данные</h2>
+                <h2>➕ Добавить данные</h2>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Дата</label>
@@ -537,12 +498,12 @@
                         <input type="number" id="avizo" value="0" min="0">
                     </div>
                 </div>
-                <button class="btn" onclick="addData()">📥 Добавить данные</button>
+                <button class="btn" onclick="addData()">📥 Добавить</button>
             </div>
 
             <!-- Data Table -->
             <div class="table-container">
-                <div id="loadingData" class="loading" style="display: none;">Загрузка данных...</div>
+                <div id="loadingData" class="loading" style="display: none;">Загрузка...</div>
                 <table id="kpiTable">
                     <thead>
                         <tr>
@@ -562,11 +523,9 @@
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <tr>
-                            <td colspan="13" style="text-align: center;">Нет данных. Добавьте новые данные.</td>
-                        </tr>
+                        <tr><td colspan="13" style="text-align: center;">Нет данных</td></tr>
                     </tbody>
-                    <tfoot id="tableFooter">
+                    <tfoot>
                         <tr class="total-row">
                             <td colspan="6" style="text-align: right;"><strong>ВСЕГО:</strong></td>
                             <td id="totalIncome">0</td>
@@ -583,45 +542,25 @@
 
             <!-- Statistics -->
             <div class="statistics">
-                <div class="stat-card">
-                    <h3>📦 Всего приход</h3>
-                    <div class="stat-value" id="statIncome">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>📤 Всего расход</h3>
-                    <div class="stat-value" id="statExpense">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>🥽 Выдано СИЗ</h3>
-                    <div class="stat-value" id="statSizGive">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>🔄 Возврат СИЗ</h3>
-                    <div class="stat-value" id="statSizReturn">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>📋 АВИЗО</h3>
-                    <div class="stat-value" id="statAvizo">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>💰 Общий итог</h3>
-                    <div class="stat-value" id="statTotal">0</div>
-                </div>
+                <div class="stat-card"><h3>📦 Приход</h3><div class="stat-value" id="statIncome">0</div></div>
+                <div class="stat-card"><h3>📤 Расход</h3><div class="stat-value" id="statExpense">0</div></div>
+                <div class="stat-card"><h3>🥽 Выдано СИЗ</h3><div class="stat-value" id="statSizGive">0</div></div>
+                <div class="stat-card"><h3>🔄 Возврат СИЗ</h3><div class="stat-value" id="statSizReturn">0</div></div>
+                <div class="stat-card"><h3>📋 АВИЗО</h3><div class="stat-value" id="statAvizo">0</div></div>
+                <div class="stat-card"><h3>💰 Итого</h3><div class="stat-value" id="statTotal">0</div></div>
             </div>
 
-            <!-- Export Section -->
+            <!-- Export -->
             <div class="export-section">
-                <h2>📥 Скачать в Excel формате</h2>
-                <div class="export-buttons">
-                    <button class="btn btn-excel" onclick="exportToExcel()">📊 Скачать данные</button>
-                </div>
+                <h2>📥 Excel</h2>
+                <button class="btn btn-excel" onclick="exportToExcel()">Скачать данные</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        // Firebase configuration - ZAMENITE NA SVOI DANNYE
+        // Firebase configuration - YOUR CORRECT CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyCuiqpRI-f3aKNPRNZ9HEH6BIjO6KQmlUc",
             authDomain: "kpi-systementer.firebaseapp.com",
@@ -630,25 +569,24 @@
             messagingSenderId: "372269188026",
             appId: "1:372269188026:web:ae41a3d73d8c872bad1383"
         };
+
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
 
         let currentUser = null;
-        let allUsers = [];
         let allData = [];
         let currentFilter = 'all';
         let editingId = null;
 
         // Date time update
         function updateDateTime() {
-            const now = new Date();
-            document.getElementById('currentDateTime').innerHTML = now.toLocaleString('ru-RU');
+            document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('ru-RU');
         }
         setInterval(updateDateTime, 1000);
 
-        // Auth functions
+        // Auth tabs
         function showAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
@@ -662,6 +600,7 @@
             }
         }
 
+        // Register
         async function register() {
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
@@ -676,14 +615,11 @@
             }
 
             try {
-                // Register in Firebase Auth
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                // Check if admin
                 const isAdmin = (adminCode === 'admin123');
 
-                // Save user data to Firestore
                 await db.collection('users').doc(user.uid).set({
                     uid: user.uid,
                     email: email,
@@ -697,17 +633,12 @@
                 alert('Регистрация успешна! Теперь вы можете войти.');
                 showAuthTab('login');
                 
-                // Clear form
-                document.getElementById('regEmail').value = '';
-                document.getElementById('regPassword').value = '';
-                document.getElementById('regFullname').value = '';
-                document.getElementById('regAdminCode').value = '';
-                
             } catch (error) {
                 alert('Ошибка регистрации: ' + error.message);
             }
         }
 
+        // Login
         async function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -716,44 +647,30 @@
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                // Get user data from Firestore
                 const userDoc = await db.collection('users').doc(user.uid).get();
                 
                 if (userDoc.exists) {
-                    currentUser = {
-                        uid: user.uid,
-                        ...userDoc.data()
-                    };
+                    currentUser = { uid: user.uid, ...userDoc.data() };
                     
                     document.getElementById('authContainer').style.display = 'none';
                     document.getElementById('appContainer').style.display = 'block';
-                    
                     document.getElementById('userDisplayName').textContent = currentUser.fullname;
                     
                     if (currentUser.isAdmin) {
                         document.getElementById('adminBadge').style.display = 'inline';
                         document.getElementById('adminFilter').style.display = 'block';
                         await loadAllUsers();
-                    } else {
-                        document.getElementById('adminBadge').style.display = 'none';
-                        document.getElementById('adminFilter').style.display = 'none';
                     }
                     
-                    // Set today's date
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('entryDate').value = today;
-                    
+                    document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
                     await loadData();
-                    
-                    // Clear login form
-                    document.getElementById('loginEmail').value = '';
-                    document.getElementById('loginPassword').value = '';
                 }
             } catch (error) {
                 alert('Ошибка входа: ' + error.message);
             }
         }
 
+        // Logout
         function logout() {
             auth.signOut();
             currentUser = null;
@@ -761,89 +678,63 @@
             document.getElementById('appContainer').style.display = 'none';
         }
 
+        // Load all users for admin filter
         async function loadAllUsers() {
-            try {
-                const usersSnapshot = await db.collection('users').get();
-                allUsers = usersSnapshot.docs.map(doc => ({
-                    uid: doc.id,
-                    ...doc.data()
-                }));
-
-                const select = document.getElementById('userSelect');
-                select.innerHTML = '<option value="all">Все пользователи</option>';
-                
-                allUsers.forEach(user => {
-                    if (!user.isAdmin) {
-                        const option = document.createElement('option');
-                        option.value = user.uid;
-                        option.textContent = `${user.fullname} (${user.email})`;
-                        select.appendChild(option);
-                    }
-                });
-            } catch (error) {
-                console.error('Error loading users:', error);
-            }
+            const snapshot = await db.collection('users').get();
+            const select = document.getElementById('userSelect');
+            select.innerHTML = '<option value="all">Все пользователи</option>';
+            
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                if (!user.isAdmin) {
+                    const option = document.createElement('option');
+                    option.value = user.uid;
+                    option.textContent = `${user.fullname} (${user.email})`;
+                    select.appendChild(option);
+                }
+            });
         }
 
-        async function loadAllUsersData() {
-            await loadAllUsers();
-            await loadData();
-        }
-
-        // INDEX KERAK BO'LMAGAN VERSIYA
+        // Load data (NO INDEX NEEDED)
         async function loadData() {
             document.getElementById('loadingData').style.display = 'block';
             
             try {
-                // Hamma ma'lumotlarni olish (orderBy ishlatmaymiz)
                 const snapshot = await db.collection('kpiData').get();
-                
-                // Ma'lumotlarni filtrlaymiz
-                let filteredData = [];
+                let filtered = [];
                 
                 snapshot.forEach(doc => {
-                    const item = {
-                        id: doc.id,
-                        ...doc.data()
-                    };
+                    const item = { id: doc.id, ...doc.data() };
                     
-                    // Foydalanuvchi va filterga qarab saralaymiz
-                    if (!currentUser.isAdmin) {
-                        // Oddiy user faqat o'z ma'lumotlarini ko'radi
-                        if (item.userId === currentUser.uid) {
-                            filteredData.push(item);
-                        }
-                    } else {
-                        // Admin filter bo'yicha ko'radi
-                        if (currentFilter === 'all') {
-                            filteredData.push(item);
-                        } else if (item.userId === currentFilter) {
-                            filteredData.push(item);
+                    if (!currentUser.isAdmin && item.userId === currentUser.uid) {
+                        filtered.push(item);
+                    } else if (currentUser.isAdmin) {
+                        if (currentFilter === 'all' || item.userId === currentFilter) {
+                            filtered.push(item);
                         }
                     }
                 });
                 
-                // Sana bo'yicha saralaymiz (yangi -> eski)
-                filteredData.sort((a, b) => {
-                    return new Date(b.date) - new Date(a.date);
-                });
-                
-                allData = filteredData;
+                // Sort by date (newest first)
+                filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+                allData = filtered;
                 renderTable();
                 
             } catch (error) {
-                console.error('Error loading data:', error);
-                alert('Ошибка загрузки данных: ' + error.message);
+                console.error('Error:', error);
+                alert('Ошибка загрузки: ' + error.message);
             }
             
             document.getElementById('loadingData').style.display = 'none';
         }
 
+        // Filter by user (admin only)
         function filterByUser() {
             currentFilter = document.getElementById('userSelect').value;
             loadData();
         }
 
+        // Add data
         async function addData() {
             const date = document.getElementById('entryDate').value;
             const income = Number(document.getElementById('income').value) || 0;
@@ -884,24 +775,21 @@
                 alert('Данные добавлены!');
                 
             } catch (error) {
-                console.error('Error adding data:', error);
-                alert('Ошибка при добавлении данных');
+                alert('Ошибка: ' + error.message);
             }
         }
 
+        // Edit data
         function editData(id) {
             const item = allData.find(d => d.id === id);
             if (!item) return;
 
-            // Admin yoki o'z ma'lumotini tahrirlay oladi
             if (!currentUser.isAdmin && item.userId !== currentUser.uid) {
-                alert('Вы можете редактировать только свои записи!');
+                alert('Нельзя редактировать чужие записи!');
                 return;
             }
 
             editingId = id;
-            
-            // Edit formni to'ldirish
             document.getElementById('editDate').value = item.date;
             document.getElementById('editIncome').value = item.income;
             document.getElementById('editExpense').value = item.expense;
@@ -909,32 +797,21 @@
             document.getElementById('editSizReturn').value = item.sizReturn;
             document.getElementById('editAvizo').value = item.avizo;
             
-            // Edit formni ko'rsatish
             document.getElementById('editForm').style.display = 'block';
-            
-            // Scroll to edit form
-            document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
         }
 
+        // Save edit
         async function saveEdit() {
             if (!editingId) return;
 
-            const date = document.getElementById('editDate').value;
-            const income = Number(document.getElementById('editIncome').value) || 0;
-            const expense = Number(document.getElementById('editExpense').value) || 0;
-            const sizGive = Number(document.getElementById('editSizGive').value) || 0;
-            const sizReturn = Number(document.getElementById('editSizReturn').value) || 0;
-            const avizo = Number(document.getElementById('editAvizo').value) || 0;
-
             try {
                 await db.collection('kpiData').doc(editingId).update({
-                    date: date,
-                    income: income,
-                    expense: expense,
-                    sizGive: sizGive,
-                    sizReturn: sizReturn,
-                    avizo: avizo,
-                    updatedAt: new Date().toISOString()
+                    date: document.getElementById('editDate').value,
+                    income: Number(document.getElementById('editIncome').value) || 0,
+                    expense: Number(document.getElementById('editExpense').value) || 0,
+                    sizGive: Number(document.getElementById('editSizGive').value) || 0,
+                    sizReturn: Number(document.getElementById('editSizReturn').value) || 0,
+                    avizo: Number(document.getElementById('editAvizo').value) || 0
                 });
 
                 cancelEdit();
@@ -942,55 +819,59 @@
                 alert('Данные обновлены!');
                 
             } catch (error) {
-                console.error('Error updating data:', error);
-                alert('Ошибка при обновлении');
+                alert('Ошибка: ' + error.message);
             }
         }
 
+        // Cancel edit
         function cancelEdit() {
             editingId = null;
             document.getElementById('editForm').style.display = 'none';
         }
 
+        // Delete data
         async function deleteData(id) {
             const item = allData.find(d => d.id === id);
             if (!item) return;
 
-            // Admin yoki o'z ma'lumotini o'chira oladi
             if (!currentUser.isAdmin && item.userId !== currentUser.uid) {
-                alert('Вы можете удалять только свои записи!');
+                alert('Нельзя удалять чужие записи!');
                 return;
             }
 
-            if (!confirm('Вы уверены, что хотите удалить эти данные?')) return;
+            if (!confirm('Удалить запись?')) return;
 
             try {
                 await db.collection('kpiData').doc(id).delete();
                 await loadData();
             } catch (error) {
-                console.error('Error deleting data:', error);
-                alert('Ошибка при удалении');
+                alert('Ошибка: ' + error.message);
             }
         }
 
+        // Calculate row total
         function calculateRowTotal(item) {
             return Number(item.income) + Number(item.expense) + Number(item.sizGive) + 
                    Number(item.sizReturn) + Number(item.avizo);
         }
 
+        // Render table
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             
             if (allData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="13" style="text-align: center;">Нет данных</td></tr>';
-            } else {
-                tbody.innerHTML = '';
-                allData.forEach((item, index) => {
-                    const rowTotal = calculateRowTotal(item);
-                    const canEdit = currentUser.isAdmin || item.userId === currentUser.uid;
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
+                updateTotals();
+                return;
+            }
+
+            tbody.innerHTML = '';
+            allData.forEach((item, index) => {
+                const total = calculateRowTotal(item);
+                const canEdit = currentUser.isAdmin || item.userId === currentUser.uid;
+                
+                tbody.innerHTML += `
+                    <tr>
                         <td>${index + 1}</td>
                         <td>${new Date(item.date).toLocaleDateString('ru-RU')}</td>
                         <td>${item.userEmail || ''}</td>
@@ -1002,76 +883,66 @@
                         <td>${Number(item.sizGive).toLocaleString()}</td>
                         <td>${Number(item.sizReturn).toLocaleString()}</td>
                         <td>${Number(item.avizo).toLocaleString()}</td>
-                        <td><strong>${rowTotal.toLocaleString()}</strong></td>
+                        <td><strong>${total.toLocaleString()}</strong></td>
                         <td class="action-buttons">
                             ${canEdit ? 
                                 `<button class="edit-btn" onclick="editData('${item.id}')">✏️</button>
                                  <button class="delete-btn" onclick="deleteData('${item.id}')">🗑️</button>` : 
                                 ''}
                         </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }
+                    </tr>
+                `;
+            });
             
             updateTotals();
         }
 
+        // Update totals
         function updateTotals() {
-            let totals = {
-                income: 0,
-                expense: 0,
-                sizGive: 0,
-                sizReturn: 0,
-                avizo: 0
-            };
-
+            let income = 0, expense = 0, sizGive = 0, sizReturn = 0, avizo = 0;
+            
             allData.forEach(item => {
-                totals.income += Number(item.income);
-                totals.expense += Number(item.expense);
-                totals.sizGive += Number(item.sizGive);
-                totals.sizReturn += Number(item.sizReturn);
-                totals.avizo += Number(item.avizo);
+                income += Number(item.income);
+                expense += Number(item.expense);
+                sizGive += Number(item.sizGive);
+                sizReturn += Number(item.sizReturn);
+                avizo += Number(item.avizo);
             });
 
-            const overall = totals.income + totals.expense + totals.sizGive + totals.sizReturn + totals.avizo;
+            const overall = income + expense + sizGive + sizReturn + avizo;
 
-            document.getElementById('totalIncome').textContent = totals.income.toLocaleString();
-            document.getElementById('totalExpense').textContent = totals.expense.toLocaleString();
-            document.getElementById('totalSizGive').textContent = totals.sizGive.toLocaleString();
-            document.getElementById('totalSizReturn').textContent = totals.sizReturn.toLocaleString();
-            document.getElementById('totalAvizo').textContent = totals.avizo.toLocaleString();
+            document.getElementById('totalIncome').textContent = income.toLocaleString();
+            document.getElementById('totalExpense').textContent = expense.toLocaleString();
+            document.getElementById('totalSizGive').textContent = sizGive.toLocaleString();
+            document.getElementById('totalSizReturn').textContent = sizReturn.toLocaleString();
+            document.getElementById('totalAvizo').textContent = avizo.toLocaleString();
             document.getElementById('totalOverall').textContent = overall.toLocaleString();
 
-            document.getElementById('statIncome').textContent = totals.income.toLocaleString();
-            document.getElementById('statExpense').textContent = totals.expense.toLocaleString();
-            document.getElementById('statSizGive').textContent = totals.sizGive.toLocaleString();
-            document.getElementById('statSizReturn').textContent = totals.sizReturn.toLocaleString();
-            document.getElementById('statAvizo').textContent = totals.avizo.toLocaleString();
+            document.getElementById('statIncome').textContent = income.toLocaleString();
+            document.getElementById('statExpense').textContent = expense.toLocaleString();
+            document.getElementById('statSizGive').textContent = sizGive.toLocaleString();
+            document.getElementById('statSizReturn').textContent = sizReturn.toLocaleString();
+            document.getElementById('statAvizo').textContent = avizo.toLocaleString();
             document.getElementById('statTotal').textContent = overall.toLocaleString();
         }
 
+        // Export to Excel
         function exportToExcel() {
             if (allData.length === 0) {
-                alert('Нет данных для экспорта');
+                alert('Нет данных');
                 return;
             }
 
-            const excelData = [];
-            
-            excelData.push(['KPI ОТЧЕТ']);
-            excelData.push([`Дата: ${new Date().toLocaleDateString('ru-RU')}`]);
-            excelData.push([`Пользователь: ${currentUser.fullname}`]);
-            excelData.push([`Роль: ${currentUser.isAdmin ? 'Администратор' : 'Пользователь'}`]);
-            excelData.push([]);
-
-            excelData.push([
-                '№', 'Дата', 'Пользователь', 'Должность', 'Ф.И.О.', 'Склад',
-                'Приход', 'Расход', 'Передача СИЗ', 'Возврат СИЗ', 'АВИЗО', 'Итого'
-            ]);
+            const excelData = [
+                ['KPI ОТЧЕТ'],
+                [`Дата: ${new Date().toLocaleDateString('ru-RU')}`],
+                [`Пользователь: ${currentUser.fullname}`],
+                [],
+                ['№', 'Дата', 'Email', 'Должность', 'Ф.И.О.', 'Склад', 'Приход', 'Расход', 'Передача СИЗ', 'Возврат СИЗ', 'АВИЗО', 'Итого']
+            ];
 
             allData.forEach((item, index) => {
-                const rowTotal = calculateRowTotal(item);
+                const total = calculateRowTotal(item);
                 excelData.push([
                     index + 1,
                     new Date(item.date).toLocaleDateString('ru-RU'),
@@ -1084,28 +955,9 @@
                     item.sizGive,
                     item.sizReturn,
                     item.avizo,
-                    rowTotal
+                    total
                 ]);
             });
-
-            // Add total row
-            const totals = {
-                income: allData.reduce((sum, item) => sum + Number(item.income), 0),
-                expense: allData.reduce((sum, item) => sum + Number(item.expense), 0),
-                sizGive: allData.reduce((sum, item) => sum + Number(item.sizGive), 0),
-                sizReturn: allData.reduce((sum, item) => sum + Number(item.sizReturn), 0),
-                avizo: allData.reduce((sum, item) => sum + Number(item.avizo), 0)
-            };
-            
-            excelData.push([
-                '', '', '', '', '', 'ИТОГО:',
-                totals.income,
-                totals.expense,
-                totals.sizGive,
-                totals.sizReturn,
-                totals.avizo,
-                totals.income + totals.expense + totals.sizGive + totals.sizReturn + totals.avizo
-            ]);
 
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(excelData);
@@ -1115,45 +967,31 @@
             XLSX.writeFile(wb, filename);
         }
 
-        // Check auth state on load
+        // Auth state observer
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                try {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    if (userDoc.exists) {
-                        currentUser = {
-                            uid: user.uid,
-                            ...userDoc.data()
-                        };
-                        
-                        document.getElementById('authContainer').style.display = 'none';
-                        document.getElementById('appContainer').style.display = 'block';
-                        
-                        document.getElementById('userDisplayName').textContent = currentUser.fullname;
-                        
-                        if (currentUser.isAdmin) {
-                            document.getElementById('adminBadge').style.display = 'inline';
-                            document.getElementById('adminFilter').style.display = 'block';
-                            await loadAllUsers();
-                        }
-                        
-                        const today = new Date().toISOString().split('T')[0];
-                        document.getElementById('entryDate').value = today;
-                        
-                        await loadData();
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    currentUser = { uid: user.uid, ...userDoc.data() };
+                    
+                    document.getElementById('authContainer').style.display = 'none';
+                    document.getElementById('appContainer').style.display = 'block';
+                    document.getElementById('userDisplayName').textContent = currentUser.fullname;
+                    
+                    if (currentUser.isAdmin) {
+                        document.getElementById('adminBadge').style.display = 'inline';
+                        document.getElementById('adminFilter').style.display = 'block';
+                        await loadAllUsers();
                     }
-                } catch (error) {
-                    console.error('Auth error:', error);
+                    
+                    document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+                    await loadData();
                 }
             } else {
                 document.getElementById('authContainer').style.display = 'block';
                 document.getElementById('appContainer').style.display = 'none';
             }
         });
-
-        // Set default date
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('entryDate').value = today;
     </script>
 </body>
 </html>

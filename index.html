@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPI - Операторов (Firebase)</title>
+    <title>KPI - Операторов </title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
-        /* Avvalgi CSS kodlari o'sha joyda */
         * {
             margin: 0;
             padding: 0;
@@ -29,7 +28,7 @@
         }
 
         .auth-container {
-            max-width: 400px;
+            max-width: 450px;
             margin: 50px auto;
             background: white;
             border-radius: 15px;
@@ -116,10 +115,27 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
+        .btn-success {
+            background: #48bb78;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
         .btn-excel {
             background: #38a169;
             font-size: 18px;
             padding: 15px 40px;
+            width: auto;
         }
 
         .app-container {
@@ -137,26 +153,31 @@
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .user-info {
             display: flex;
             align-items: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .admin-badge {
             background: #48bb78;
             color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
         }
 
         .logout-btn {
             background: #e53e3e;
             padding: 8px 20px;
             font-size: 14px;
+            width: auto;
         }
 
         .form-section {
@@ -164,6 +185,11 @@
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
         }
 
         .form-row {
@@ -200,6 +226,10 @@
             border-bottom: 1px solid #e0e0e0;
         }
 
+        tr:hover {
+            background: #f8f9fa;
+        }
+
         .total-row {
             background: #e2e8f0;
             font-weight: bold;
@@ -216,6 +246,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 12px;
+            transition: all 0.3s;
         }
 
         .edit-btn {
@@ -223,9 +254,17 @@
             color: white;
         }
 
+        .edit-btn:hover {
+            background: #38a169;
+        }
+
         .delete-btn {
             background: #f56565;
             color: white;
+        }
+
+        .delete-btn:hover {
+            background: #e53e3e;
         }
 
         .statistics {
@@ -241,6 +280,23 @@
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
         }
 
         .export-section {
@@ -264,17 +320,27 @@
         }
 
         .user-filter {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
+            background: white;
+            padding: 20px;
             border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .user-filter select {
             padding: 10px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            width: 300px;
+            min-width: 300px;
+            font-size: 14px;
+        }
+
+        .user-filter label {
+            font-weight: bold;
+            color: #667eea;
         }
 
         .loading {
@@ -282,6 +348,19 @@
             padding: 20px;
             font-size: 18px;
             color: #667eea;
+        }
+
+        .edit-form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #667eea;
+        }
+
+        .edit-form h3 {
+            color: #667eea;
+            margin-bottom: 15px;
         }
 
         @media (max-width: 768px) {
@@ -295,6 +374,10 @@
             
             .export-buttons {
                 flex-direction: column;
+            }
+            
+            .user-filter select {
+                min-width: 100%;
             }
         }
     </style>
@@ -350,7 +433,7 @@
                 <div class="form-group">
                     <label>Склад</label>
                     <select id="regWarehouse">
-                        <option value="ПС Алмалык (Металлопрокат)">ПС Алмалык (Металлопрокат)</option>
+                       <option value="ПС Алмалык (Металлопрокат)">ПС Алмалык (Металлопрокат)</option>
                         <option value="ТС Алмалык">ТС Алмалык</option>
                         <option value="Склад материалов">ПС Алмалык (Основной)</option>
                         <option value="ПС Алмалык (Инерт)">ПС Алмалык (Инерт)</option>
@@ -361,7 +444,7 @@
                 </div>
                 <div class="form-group">
                     <label>Секретный код (для администратора)</label>
-                    <input type="text" id="regAdminCode" placeholder="Введите код">
+                    <input type="text" id="regAdminCode" placeholder="Введите код для админа">
                 </div>
                 <button class="btn" onclick="register()">Зарегистрироваться</button>
             </div>
@@ -383,10 +466,46 @@
 
             <!-- Admin Filter -->
             <div id="adminFilter" class="user-filter" style="display: none;">
-                <label for="userSelect">Фильтр по пользователям:</label>
+                <label>Фильтр по пользователям:</label>
                 <select id="userSelect" onchange="filterByUser()">
                     <option value="all">Все пользователи</option>
                 </select>
+                <button class="btn btn-success" onclick="loadAllUsersData()" style="width: auto;">Обновить список</button>
+            </div>
+
+            <!-- Edit Form (hidden by default) -->
+            <div id="editForm" class="edit-form" style="display: none;">
+                <h3>✏️ Редактирование записи</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Дата</label>
+                        <input type="date" id="editDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Приход</label>
+                        <input type="number" id="editIncome" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Расход</label>
+                        <input type="number" id="editExpense" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Передача СИЗ</label>
+                        <input type="number" id="editSizGive" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Возврат СИЗ</label>
+                        <input type="number" id="editSizReturn" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>АВИЗО</label>
+                        <input type="number" id="editAvizo" value="0" min="0">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-success" onclick="saveEdit()">💾 Сохранить</button>
+                    <button class="btn btn-danger" onclick="cancelEdit()">❌ Отмена</button>
+                </div>
             </div>
 
             <!-- Data Entry Form -->
@@ -502,14 +621,14 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        // Firebase configuration
+        // Firebase configuration - ZAMENITE NA SVOI DANNYE
         const firebaseConfig = {
-            apiKey: "AIzaSyCuiqpRI-f3aKNPRNZ9HEH6BIjO6KQmlUc", // Sizning Firebase ma'lumotlaringiz
-            authDomain: "kpi-systementer.firebaseapp.com",
-            projectId: "kpi-systementer",
-            storageBucket: "kpi-systementer.firebasestorage.app",
-            messagingSenderId: "372269188026",
-            appId: "1:372269188026:web:ae41a3d73d8c872bad1383"
+            apiKey: "AIzaSyBxqL9VWYjKXQZxR7YQxKjL8M3N5P7R9T2V4",
+            authDomain: "kpi-system-12345.firebaseapp.com",
+            projectId: "kpi-system-12345",
+            storageBucket: "kpi-system-12345.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abc123def456"
         };
 
         // Initialize Firebase
@@ -521,6 +640,7 @@
         let allUsers = [];
         let allData = [];
         let currentFilter = 'all';
+        let editingId = null;
 
         // Date time update
         function updateDateTime() {
@@ -578,6 +698,12 @@
                 alert('Регистрация успешна! Теперь вы можете войти.');
                 showAuthTab('login');
                 
+                // Clear form
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPassword').value = '';
+                document.getElementById('regFullname').value = '';
+                document.getElementById('regAdminCode').value = '';
+                
             } catch (error) {
                 alert('Ошибка регистрации: ' + error.message);
             }
@@ -619,6 +745,10 @@
                     document.getElementById('entryDate').value = today;
                     
                     await loadData();
+                    
+                    // Clear login form
+                    document.getElementById('loginEmail').value = '';
+                    document.getElementById('loginPassword').value = '';
                 }
             } catch (error) {
                 alert('Ошибка входа: ' + error.message);
@@ -633,47 +763,78 @@
         }
 
         async function loadAllUsers() {
-            const usersSnapshot = await db.collection('users').get();
-            allUsers = usersSnapshot.docs.map(doc => ({
-                uid: doc.id,
-                ...doc.data()
-            }));
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                allUsers = usersSnapshot.docs.map(doc => ({
+                    uid: doc.id,
+                    ...doc.data()
+                }));
 
-            const select = document.getElementById('userSelect');
-            select.innerHTML = '<option value="all">Все пользователи</option>';
-            
-            allUsers.forEach(user => {
-                if (!user.isAdmin) {
-                    const option = document.createElement('option');
-                    option.value = user.uid;
-                    option.textContent = `${user.fullname} (${user.email})`;
-                    select.appendChild(option);
-                }
-            });
+                const select = document.getElementById('userSelect');
+                select.innerHTML = '<option value="all">Все пользователи</option>';
+                
+                allUsers.forEach(user => {
+                    if (!user.isAdmin) {
+                        const option = document.createElement('option');
+                        option.value = user.uid;
+                        option.textContent = `${user.fullname} (${user.email})`;
+                        select.appendChild(option);
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
         }
 
+        async function loadAllUsersData() {
+            await loadAllUsers();
+            await loadData();
+        }
+
+        // INDEX KERAK BO'LMAGAN VERSIYA
         async function loadData() {
             document.getElementById('loadingData').style.display = 'block';
             
             try {
-                let query = db.collection('kpiData').orderBy('date', 'desc');
+                // Hamma ma'lumotlarni olish (orderBy ishlatmaymiz)
+                const snapshot = await db.collection('kpiData').get();
                 
-                if (!currentUser.isAdmin) {
-                    query = query.where('userId', '==', currentUser.uid);
-                } else if (currentFilter !== 'all') {
-                    query = query.where('userId', '==', currentFilter);
-                }
+                // Ma'lumotlarni filtrlaymiz
+                let filteredData = [];
                 
-                const dataSnapshot = await query.get();
-                allData = dataSnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+                snapshot.forEach(doc => {
+                    const item = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    
+                    // Foydalanuvchi va filterga qarab saralaymiz
+                    if (!currentUser.isAdmin) {
+                        // Oddiy user faqat o'z ma'lumotlarini ko'radi
+                        if (item.userId === currentUser.uid) {
+                            filteredData.push(item);
+                        }
+                    } else {
+                        // Admin filter bo'yicha ko'radi
+                        if (currentFilter === 'all') {
+                            filteredData.push(item);
+                        } else if (item.userId === currentFilter) {
+                            filteredData.push(item);
+                        }
+                    }
+                });
                 
+                // Sana bo'yicha saralaymiz (yangi -> eski)
+                filteredData.sort((a, b) => {
+                    return new Date(b.date) - new Date(a.date);
+                });
+                
+                allData = filteredData;
                 renderTable();
+                
             } catch (error) {
                 console.error('Error loading data:', error);
-                alert('Ошибка загрузки данных');
+                alert('Ошибка загрузки данных: ' + error.message);
             }
             
             document.getElementById('loadingData').style.display = 'none';
@@ -729,8 +890,80 @@
             }
         }
 
+        function editData(id) {
+            const item = allData.find(d => d.id === id);
+            if (!item) return;
+
+            // Admin yoki o'z ma'lumotini tahrirlay oladi
+            if (!currentUser.isAdmin && item.userId !== currentUser.uid) {
+                alert('Вы можете редактировать только свои записи!');
+                return;
+            }
+
+            editingId = id;
+            
+            // Edit formni to'ldirish
+            document.getElementById('editDate').value = item.date;
+            document.getElementById('editIncome').value = item.income;
+            document.getElementById('editExpense').value = item.expense;
+            document.getElementById('editSizGive').value = item.sizGive;
+            document.getElementById('editSizReturn').value = item.sizReturn;
+            document.getElementById('editAvizo').value = item.avizo;
+            
+            // Edit formni ko'rsatish
+            document.getElementById('editForm').style.display = 'block';
+            
+            // Scroll to edit form
+            document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function saveEdit() {
+            if (!editingId) return;
+
+            const date = document.getElementById('editDate').value;
+            const income = Number(document.getElementById('editIncome').value) || 0;
+            const expense = Number(document.getElementById('editExpense').value) || 0;
+            const sizGive = Number(document.getElementById('editSizGive').value) || 0;
+            const sizReturn = Number(document.getElementById('editSizReturn').value) || 0;
+            const avizo = Number(document.getElementById('editAvizo').value) || 0;
+
+            try {
+                await db.collection('kpiData').doc(editingId).update({
+                    date: date,
+                    income: income,
+                    expense: expense,
+                    sizGive: sizGive,
+                    sizReturn: sizReturn,
+                    avizo: avizo,
+                    updatedAt: new Date().toISOString()
+                });
+
+                cancelEdit();
+                await loadData();
+                alert('Данные обновлены!');
+                
+            } catch (error) {
+                console.error('Error updating data:', error);
+                alert('Ошибка при обновлении');
+            }
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('editForm').style.display = 'none';
+        }
+
         async function deleteData(id) {
-            if (!confirm('Вы уверены?')) return;
+            const item = allData.find(d => d.id === id);
+            if (!item) return;
+
+            // Admin yoki o'z ma'lumotini o'chira oladi
+            if (!currentUser.isAdmin && item.userId !== currentUser.uid) {
+                alert('Вы можете удалять только свои записи!');
+                return;
+            }
+
+            if (!confirm('Вы уверены, что хотите удалить эти данные?')) return;
 
             try {
                 await db.collection('kpiData').doc(id).delete();
@@ -755,14 +988,16 @@
                 tbody.innerHTML = '';
                 allData.forEach((item, index) => {
                     const rowTotal = calculateRowTotal(item);
+                    const canEdit = currentUser.isAdmin || item.userId === currentUser.uid;
+                    
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${new Date(item.date).toLocaleDateString('ru-RU')}</td>
-                        <td>${item.userEmail}</td>
-                        <td>${item.position}</td>
-                        <td>${item.userFullname}</td>
-                        <td>${item.warehouse}</td>
+                        <td>${item.userEmail || ''}</td>
+                        <td>${item.position || ''}</td>
+                        <td>${item.userFullname || ''}</td>
+                        <td>${item.warehouse || ''}</td>
                         <td>${Number(item.income).toLocaleString()}</td>
                         <td>${Number(item.expense).toLocaleString()}</td>
                         <td>${Number(item.sizGive).toLocaleString()}</td>
@@ -770,8 +1005,9 @@
                         <td>${Number(item.avizo).toLocaleString()}</td>
                         <td><strong>${rowTotal.toLocaleString()}</strong></td>
                         <td class="action-buttons">
-                            ${(currentUser.isAdmin || item.userId === currentUser.uid) ? 
-                                `<button class="delete-btn" onclick="deleteData('${item.id}')">🗑️</button>` : 
+                            ${canEdit ? 
+                                `<button class="edit-btn" onclick="editData('${item.id}')">✏️</button>
+                                 <button class="delete-btn" onclick="deleteData('${item.id}')">🗑️</button>` : 
                                 ''}
                         </td>
                     `;
@@ -827,6 +1063,7 @@
             excelData.push(['KPI ОТЧЕТ']);
             excelData.push([`Дата: ${new Date().toLocaleDateString('ru-RU')}`]);
             excelData.push([`Пользователь: ${currentUser.fullname}`]);
+            excelData.push([`Роль: ${currentUser.isAdmin ? 'Администратор' : 'Пользователь'}`]);
             excelData.push([]);
 
             excelData.push([
@@ -839,10 +1076,10 @@
                 excelData.push([
                     index + 1,
                     new Date(item.date).toLocaleDateString('ru-RU'),
-                    item.userEmail,
-                    item.position,
-                    item.userFullname,
-                    item.warehouse,
+                    item.userEmail || '',
+                    item.position || '',
+                    item.userFullname || '',
+                    item.warehouse || '',
                     item.income,
                     item.expense,
                     item.sizGive,
@@ -851,6 +1088,25 @@
                     rowTotal
                 ]);
             });
+
+            // Add total row
+            const totals = {
+                income: allData.reduce((sum, item) => sum + Number(item.income), 0),
+                expense: allData.reduce((sum, item) => sum + Number(item.expense), 0),
+                sizGive: allData.reduce((sum, item) => sum + Number(item.sizGive), 0),
+                sizReturn: allData.reduce((sum, item) => sum + Number(item.sizReturn), 0),
+                avizo: allData.reduce((sum, item) => sum + Number(item.avizo), 0)
+            };
+            
+            excelData.push([
+                '', '', '', '', '', 'ИТОГО:',
+                totals.income,
+                totals.expense,
+                totals.sizGive,
+                totals.sizReturn,
+                totals.avizo,
+                totals.income + totals.expense + totals.sizGive + totals.sizReturn + totals.avizo
+            ]);
 
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(excelData);
@@ -863,28 +1119,32 @@
         // Check auth state on load
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                if (userDoc.exists) {
-                    currentUser = {
-                        uid: user.uid,
-                        ...userDoc.data()
-                    };
-                    
-                    document.getElementById('authContainer').style.display = 'none';
-                    document.getElementById('appContainer').style.display = 'block';
-                    
-                    document.getElementById('userDisplayName').textContent = currentUser.fullname;
-                    
-                    if (currentUser.isAdmin) {
-                        document.getElementById('adminBadge').style.display = 'inline';
-                        document.getElementById('adminFilter').style.display = 'block';
-                        await loadAllUsers();
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        currentUser = {
+                            uid: user.uid,
+                            ...userDoc.data()
+                        };
+                        
+                        document.getElementById('authContainer').style.display = 'none';
+                        document.getElementById('appContainer').style.display = 'block';
+                        
+                        document.getElementById('userDisplayName').textContent = currentUser.fullname;
+                        
+                        if (currentUser.isAdmin) {
+                            document.getElementById('adminBadge').style.display = 'inline';
+                            document.getElementById('adminFilter').style.display = 'block';
+                            await loadAllUsers();
+                        }
+                        
+                        const today = new Date().toISOString().split('T')[0];
+                        document.getElementById('entryDate').value = today;
+                        
+                        await loadData();
                     }
-                    
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('entryDate').value = today;
-                    
-                    await loadData();
+                } catch (error) {
+                    console.error('Auth error:', error);
                 }
             } else {
                 document.getElementById('authContainer').style.display = 'block';

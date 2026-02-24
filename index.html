@@ -360,7 +360,7 @@
                 <h2>Вход в систему</h2>
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="Введите email" value="shaxriyor1997.ss@gmail.com">
+                    <input type="email" id="loginEmail" placeholder="Введите email">
                 </div>
                 <div class="form-group">
                     <label>Пароль</label>
@@ -509,9 +509,8 @@
                         <tr>
                             <th>№</th>
                             <th>Дата</th>
-                            <th>Пользователь</th>
-                            <th>Должность</th>
                             <th>Ф.И.О.</th>
+                            <th>Должность</th>
                             <th>Склад</th>
                             <th>Приход</th>
                             <th>Расход</th>
@@ -523,11 +522,11 @@
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <tr><td colspan="13" style="text-align: center;">Нет данных</td></tr>
+                        <tr><td colspan="12" style="text-align: center;">Нет данных</td></tr>
                     </tbody>
                     <tfoot>
                         <tr class="total-row">
-                            <td colspan="6" style="text-align: right;"><strong>ВСЕГО:</strong></td>
+                            <td colspan="5" style="text-align: right;"><strong>ВСЕГО:</strong></td>
                             <td id="totalIncome">0</td>
                             <td id="totalExpense">0</td>
                             <td id="totalSizGive">0</td>
@@ -689,7 +688,7 @@
                 if (!user.isAdmin) {
                     const option = document.createElement('option');
                     option.value = user.uid;
-                    option.textContent = `${user.fullname} (${user.email})`;
+                    option.textContent = `${user.fullname} (${user.email})`; // Admin sees email in filter
                     select.appendChild(option);
                 }
             });
@@ -855,12 +854,12 @@
                    Number(item.sizReturn) + Number(item.avizo);
         }
 
-        // Render table
+        // Render table (EMAIL HIDDEN - SHOWING FULL NAME ONLY)
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             
             if (allData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="13" style="text-align: center;">Нет данных</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center;">Нет данных</td></tr>';
                 updateTotals();
                 return;
             }
@@ -874,9 +873,8 @@
                     <tr>
                         <td>${index + 1}</td>
                         <td>${new Date(item.date).toLocaleDateString('ru-RU')}</td>
-                        <td>${item.userEmail || ''}</td>
+                        <td>${item.userFullname || 'Не указано'}</td>
                         <td>${item.position || ''}</td>
-                        <td>${item.userFullname || ''}</td>
                         <td>${item.warehouse || ''}</td>
                         <td>${Number(item.income).toLocaleString()}</td>
                         <td>${Number(item.expense).toLocaleString()}</td>
@@ -926,7 +924,7 @@
             document.getElementById('statTotal').textContent = overall.toLocaleString();
         }
 
-        // Export to Excel
+        // Export to Excel (EMAIL HIDDEN)
         function exportToExcel() {
             if (allData.length === 0) {
                 alert('Нет данных');
@@ -938,7 +936,7 @@
                 [`Дата: ${new Date().toLocaleDateString('ru-RU')}`],
                 [`Пользователь: ${currentUser.fullname}`],
                 [],
-                ['№', 'Дата', 'Email', 'Должность', 'Ф.И.О.', 'Склад', 'Приход', 'Расход', 'Передача СИЗ', 'Возврат СИЗ', 'АВИЗО', 'Итого']
+                ['№', 'Дата', 'Ф.И.О.', 'Должность', 'Склад', 'Приход', 'Расход', 'Передача СИЗ', 'Возврат СИЗ', 'АВИЗО', 'Итого']
             ];
 
             allData.forEach((item, index) => {
@@ -946,9 +944,8 @@
                 excelData.push([
                     index + 1,
                     new Date(item.date).toLocaleDateString('ru-RU'),
-                    item.userEmail || '',
+                    item.userFullname || 'Не указано',
                     item.position || '',
-                    item.userFullname || '',
                     item.warehouse || '',
                     item.income,
                     item.expense,
